@@ -853,9 +853,9 @@ util.DataBuffer.prototype.putBytes = function(bytes, encoding) {
     (typeof bytes === 'object' &&
     typeof bytes.read === 'number' && typeof bytes.write === 'number' &&
     util.isArrayBufferView(bytes.data))) {
-    var src = new Uint8Array(bytes.data.byteLength, bytes.read, bytes.length());
+    var src = new Uint8Array(bytes.data.buffer, bytes.read, bytes.length());
     this.accommodate(src.byteLength);
-    var dst = new Uint8Array(bytes.data.byteLength, this.write);
+    var dst = new Uint8Array(this.data.buffer, this.write);
     dst.set(src);
     this.write += src.byteLength;
     return this;
@@ -926,7 +926,9 @@ util.DataBuffer.prototype.putBytes = function(bytes, encoding) {
  */
 util.DataBuffer.prototype.putBuffer = function(buffer) {
   this.putBytes(buffer);
-  buffer.clear();
+	if('clear' in buffer) {
+		buffer.clear();
+	}
   return this;
 };
 
